@@ -17,7 +17,9 @@ import ru.kata.spring.boot_security.demo.service.UserService;
 
 import java.security.Principal;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -59,10 +61,21 @@ public class AdminController {
     }
 
     @PostMapping("/users")
-    public ResponseEntity<User> addNewUser(@RequestBody @Valid User newUser, BindingResult bindingResult) {
-        userService.updateUser(newUser);
-        return new ResponseEntity<>(newUser, HttpStatus.OK);
+    public ResponseEntity<?> addNewUser(@Valid @RequestBody User newUser, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errors = new HashMap<>();
+            bindingResult.getFieldErrors().forEach(error -> {
+                errors.put(error.getField(), error.getDefaultMessage());
+            });
+            return ResponseEntity.badRequest().body(errors);
+        }
+
+        userService.saveUser(newUser);
+
+        return ResponseEntity.ok(newUser);
     }
+
 
     @PatchMapping("/users/{id}")
     public ResponseEntity<User> updateUser(@RequestBody User userFromWebPage, @PathVariable("id") Long id) {
