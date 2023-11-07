@@ -1,7 +1,7 @@
 let formEdit = document.forms["formEdit"];
 editUser();
 
-const URLEdit = "http://localhost:8088/api/admin/users/";
+const URLEdit = "http://localhost:8080/api/admin/users/";
 
 async function editModal(id) {
     const modalEdit = new bootstrap.Modal(document.querySelector('#editModal'));
@@ -11,8 +11,6 @@ async function editModal(id) {
 function editUser() {
     formEdit.addEventListener("submit", ev => {
         ev.preventDefault();
-
-        //Приведение ролей из вида js к виду java
         let rolesForEdit = [];
         for (let i = 0; i < formEdit.roles.options.length; i++) {
             if (formEdit.roles.options[i].selected) rolesForEdit.push({
@@ -41,13 +39,11 @@ function editUser() {
         });
     });
 }
-
-//Приведение ролей к виду JS
 function loadRolesForEdit() {
     let selectEdit = document.getElementById("edit-roles");
     selectEdit.innerHTML = "";
 
-    fetch("http://localhost:8088/api/admin/roles")
+    fetch("http://localhost:8080/api/admin/roles")
         .then(res => res.json())
         .then(data => {
             data.forEach(role => {
