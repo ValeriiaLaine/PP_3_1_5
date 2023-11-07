@@ -1,5 +1,4 @@
 let formNew = document.forms["formNew"];
-
 createNewUser();
 
 function createNewUser() {
@@ -9,10 +8,13 @@ function createNewUser() {
         let lastname = formNew.lastname.value;
         let password = formNew.password.value;
 
-
         let usernameError;
         let lastnameError;
         let passwordError;
+
+        // Clear previously set errors
+        const errorElements = document.querySelectorAll(".error");
+        errorElements.forEach((el) => el.remove());
 
         if(username.length < 4 || username.length > 20) {
             usernameError = "Your first name is too short or too long, it must contain at least 3 symbols and not exceed 20 symbols";
@@ -26,32 +28,13 @@ function createNewUser() {
             passwordError = "Your password is too short, it must contain at least 4 symbols";
         }
 
-        if(usernameError) {
-            let errorElement = document.createElement("div");
-            errorElement.style.color = "red";
-            errorElement.style.fontWeight = "bold";
-            errorElement.innerText = usernameError;
-            formNew.username.parentElement.appendChild(errorElement);
-        }
-
-        if(lastnameError) {
-            let errorElement = document.createElement("div");
-            errorElement.style.color = "red";
-            errorElement.style.fontWeight = "bold";
-            errorElement.innerText = lastnameError;
-            formNew.lastname.parentElement.appendChild(errorElement);
-        }
-        if(passwordError) {
-            let errorElement = document.createElement("div");
-            errorElement.style.color = "red";
-            errorElement.style.fontWeight = "bold";
-            errorElement.innerText = passwordError;
-            formNew.password.parentElement.appendChild(errorElement);
-        }
-
-        if(lastnameError || usernameError || passwordError) {
+        if(usernameError || lastnameError || passwordError) {
+            displayError(usernameError, formNew.username);
+            displayError(lastnameError, formNew.lastname);
+            displayError(passwordError, formNew.password);
             return;
         }
+
         let rolesForNewUser = [];
         for (let i = 0; i < formNew.roles.options.length; i++) {
             if (formNew.roles.options[i].selected)
@@ -77,10 +60,21 @@ function createNewUser() {
         }).then(() => {
             formNew.reset();
             getAllUsers();
-            $('#usersTable').click(); //клик по кнопке Users Table
+            $('#usersTable').click();
 
         });
     });
+}
+
+function displayError(errorMessage, field) {
+    if(errorMessage) {
+        let errorElement = document.createElement("div");
+        errorElement.style.color = "red";
+        errorElement.style.fontWeight = "bold";
+        errorElement.classList.add("error");
+        errorElement.innerText = errorMessage;
+        field.parentElement.appendChild(errorElement);
+    }
 }
 
 function loadRolesForNewUser() {
@@ -102,4 +96,3 @@ function loadRolesForNewUser() {
 }
 
 window.addEventListener("load", loadRolesForNewUser);
-
